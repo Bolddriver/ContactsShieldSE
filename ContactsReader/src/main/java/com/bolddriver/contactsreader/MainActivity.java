@@ -6,15 +6,12 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = "GetContacts";
 
     private ListView mListView;
 
@@ -30,9 +27,6 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 1);
             return;
         }
-
-        // 获取联系人信息
-        Log.d(TAG, "onCreate: 获取联系人信息");
 
         ContentResolver resolver = getContentResolver();
         //联系人姓名 联系人号码 按升序排列
