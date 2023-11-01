@@ -8,6 +8,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Contacts">
+
+        <provider
+            android:authorities="com.bolddriver.contactshooker.provider.ContactsInfoProvider"
+            android:name=".provider.ContactsInfoProvider"
+            android:enabled="true"
+            android:exported="true"
+            android:grantUriPermissions="true">
+        </provider>
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -17,6 +26,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="联系人拦截" />
+        <meta-data
+            android:name="xposedminversion"
+            android:value="93" />
+        <meta-data
+            android:name="xposedscope"
+            android:resource="@array/xposed_scope" />
     </application>
 
 </manifest>
