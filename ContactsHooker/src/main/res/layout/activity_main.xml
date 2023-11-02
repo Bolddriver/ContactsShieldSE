@@ -33,8 +33,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:scaleY="1.25"
-                android:scaleX="1.25"
+                android:padding="10dp"
+                android:scaleY="1.5"
+                android:scaleX="1.5"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
         </LinearLayout>
 
