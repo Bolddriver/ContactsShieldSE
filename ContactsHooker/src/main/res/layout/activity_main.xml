@@ -15,74 +15,81 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
+        android:orientation="vertical"
+        android:layout_margin="10dp">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="开启联系人拦截"
-            android:textSize="40sp" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="开启联系人保护"
+                android:textSize="40sp" />
 
-        <Switch
-            android:id="@+id/swi_hookEnabled"
-            android:layout_width="wrap_content"
+            <Switch
+                android:id="@+id/swi_hookEnabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:scaleY="1.25"
+                android:scaleX="1.25"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+        </LinearLayout>
+
+        <RadioGroup
+            android:id="@+id/rg_return_config"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:scaleY="1.25"
-            android:scaleX="1.25"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/rb_null"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="返回空联系人"
+                android:textSize="30sp"
+                android:checked="true" />
+            <RadioButton
+                android:id="@+id/rb_selected"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="返回选中的联系人"
+                android:textSize="30sp"/>
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="选择联系人"
+                android:textSize="25sp"/>
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_margin="3dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="选好了"/>
+            <Button
+                android:id="@+id/btn_save_configs"
+                android:layout_margin="3dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="保存配置"/>
+        </LinearLayout>
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <RadioGroup
-        android:id="@+id/rg_return_config"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <RadioButton
-            android:id="@+id/rb_null"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="返回空联系人"
-            android:textSize="30sp"
-            android:checked="true" />
-        <RadioButton
-            android:id="@+id/rb_selected"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="返回选中的联系人"
-            android:textSize="30sp"/>
-    </RadioGroup>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="选择联系人"
-            android:textSize="25sp"/>
-        <Button
-            android:id="@+id/btn_save"
-            android:layout_margin="3dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="选好了"/>
-        <Button
-            android:id="@+id/btn_save_configs"
-            android:layout_margin="3dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="保存配置"/>
-    </LinearLayout>
-    <ListView
-        android:id="@+id/list_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 
 
