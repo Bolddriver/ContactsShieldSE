@@ -9,6 +9,7 @@ import java.util.List;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -18,18 +19,35 @@ public class Hook implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        //TODO 包名
+        //TODO 包名过滤
         if (loadPackageParam.packageName.equals("com.bolddriver.contactsreader")) {
-            //Hook query方法，修改参数中的uri为模块的uri
-            XposedHelpers.findAndHookMethod(ContentResolver.class, "query", Uri.class, String[].class, String.class, String[].class, String.class, CancellationSignal.class, new XC_MethodHook() {
 
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    Log.d(TAG, "=====before: arg0: " + param.args[0] + "arg4: " + param.args[4]);
-                    param.args[0] = Uri.parse("content://com.bolddriver.contactshooker.provider.ContactsInfoProvider/contacts");
+            XSharedPreferences pref = new XSharedPreferences("com.bolddriver.contactshooker","HookConfig");
+            boolean hookEnabled = pref.getBoolean("hookEnabled",false);
+            int returnMode = pref.getInt("returnMode",1);
+
+            if(hookEnabled){
+                if(returnMode==2){
+                    //返回自定义值
+                    //Hook query方法，修改参数中的uri为模块的uri
+                    XposedHelpers.findAndHookMethod(ContentResolver.class, "query", Uri.class, String[].class, String.class, String[].class, String.class, CancellationSignal.class, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            Log.d(TAG, "=====before: arg0: " + param.args[0] + "arg4: " + param.args[4]);
+                            param.args[0] = Uri.parse("content://com.bolddriver.contactshooker.provider.ContactsInfoProvider/contacts");
+                        }
+                    });
+                } else if(returnMode == 1){
+                    //返回空值
+                    XposedHelpers.findAndHookMethod(ContentResolver.class, "query", Uri.class, String[].class, String.class, String[].class, String.class, CancellationSignal.class, new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            super.afterHookedMethod(param);
+                            param.setResult(null);
+                        }
+                    });
                 }
-            });
-
+            }
         }
 
         //为被hook的应用开启权限，以便能够访问模块的ContentProvider

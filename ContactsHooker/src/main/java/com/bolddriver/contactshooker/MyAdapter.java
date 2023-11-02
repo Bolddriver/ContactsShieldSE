@@ -23,7 +23,7 @@ public class MyAdapter extends BaseAdapter {
     private List<String> name;
     private List<String> number;
     private Context context;
-    private Map<Integer,Boolean> map=new HashMap<>();
+    public Map<Integer,Boolean> map=new HashMap<>();
     @SuppressLint("Range")
     public MyAdapter(Cursor cursor, Context context){
         this.name = new ArrayList<String>();
