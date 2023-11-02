@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bolddriver.contactshooker.provider.ContactsInfoContent;
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         rb_null = findViewById(R.id.rb_null);
         rb_selected = findViewById(R.id.rb_selected);
         swi_hookEnabled = findViewById(R.id.swi_hookEnabled);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         //创建SharedPreference
         try {
