@@ -34,7 +34,7 @@ import com.bolddriver.contactshooker.provider.ContactsInfoContent;
 
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private static String TAG = "contactsBold";
     private ListView mListView;
     private SharedPreferences preferences;
@@ -42,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
     Switch swi_hookEnabled;
     RadioButton rb_null;
     RadioButton rb_selected;
+    MyAdapter adapter;
+    Cursor cursor;
+    Button btn_save;
+    Button btn_save_configs;
+    RadioGroup rg_return_config;
 
     @SuppressLint("WorldReadableFiles")
     @Override
@@ -49,12 +54,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mListView = findViewById(R.id.list_view);
-        RadioGroup rg_return_config = findViewById(R.id.rg_return_config);
+        rg_return_config = findViewById(R.id.rg_return_config);
         rb_null = findViewById(R.id.rb_null);
         rb_selected = findViewById(R.id.rb_selected);
         swi_hookEnabled = findViewById(R.id.swi_hookEnabled);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        btn_save = findViewById(R.id.btn_save);
+        btn_save_configs = findViewById(R.id.btn_save_configs);
+        btn_save.setOnClickListener(this);
+        btn_save_configs.setOnClickListener(this);
 
         //创建SharedPreference
         try {
@@ -79,68 +88,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        //查询联系人信息
-        ContentResolver resolver = getContentResolver();
-        Cursor cursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-
-        // 创建适配器，将联系人信息显示在列表视图中
-        MyAdapter adapter = new MyAdapter(cursor, this);
-        mListView.setAdapter(adapter);
-
-        //点击选好了按钮
-        Button btn_save = findViewById(R.id.btn_save);
-        btn_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //删除所有数据
-                getContentResolver().delete(ContactsInfoContent.CONTENT_URI,null,null);
-                //获取选中的信息
-                int count = mListView.getCount();
-                Map<Integer,Boolean> map = adapter.map;
-                for (int i = 0; i < count; i++) {
-                    if(Boolean.TRUE.equals(map.get(i))){
-                        cursor.moveToPosition(i);
-                        @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                        @SuppressLint("Range") String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        //将选中的联系人插入ContentProvider
-                        ContentValues values = new ContentValues();
-                        values.put(ContactsInfoContent.C_NAME, name);
-                        values.put(ContactsInfoContent.C_NUMBER, number);
-                        getContentResolver().insert(ContactsInfoContent.CONTENT_URI, values);
-                        Log.d(TAG, "insert成功");
-                    }
-                }
-                //logd输出ContentProvider中的联系人
-                Log.d(TAG, "本地的联系人");
-                Cursor mCursor = getContentResolver().query(ContactsInfoContent.CONTENT_URI, null, null, null, null);
-                if (mCursor != null) {
-                    while (mCursor.moveToNext()) {
-                        @SuppressLint("Range") String name = mCursor.getString(mCursor.getColumnIndex(ContactsInfoContent.C_NAME));
-                        @SuppressLint("Range") String number = mCursor.getString(mCursor.getColumnIndex(ContactsInfoContent.C_NUMBER));
-                        Log.d(TAG, "name:" + name + " numebr:" + number);
-                    }
-                }
-                Toast.makeText(MainActivity.this,"自定义联系人成功",Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //点击保存配置按钮
-        Button btn_save_configs = findViewById(R.id.btn_save_configs);
-        btn_save_configs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean hookEnabled = swi_hookEnabled.isChecked();//开启hook
-                int returnMode = 0;
-                if(rg_return_config.getCheckedRadioButtonId()==R.id.rb_null) returnMode=1;
-                if(rg_return_config.getCheckedRadioButtonId()==R.id.rb_selected) returnMode=2;
-
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("hookEnabled",hookEnabled);
-                editor.putInt("returnMode",returnMode);
-                editor.apply();
-                Toast.makeText(MainActivity.this,"保存配置成功",Toast.LENGTH_SHORT).show();
-            }
-        });
+        getAndDisplayContacts();
     }
 
     @Override
@@ -148,13 +96,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            //查询联系人信息
-            ContentResolver resolver = getContentResolver();
-            Cursor cursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-
-            // 创建适配器，将联系人信息显示在列表视图中
-            MyAdapter adapter = new MyAdapter(cursor, this);
-            mListView.setAdapter(adapter);
+            getAndDisplayContacts();
         }
     }
 
@@ -164,7 +106,64 @@ public class MainActivity extends AppCompatActivity {
         if(hookEnabled) swi_hookEnabled.setChecked(true);
         switch(returnMode){
             case 1: rb_null.setChecked(true);break;
-            case 2:rb_selected.setChecked(true);break;
+            case 2: rb_selected.setChecked(true);break;
+        }
+    }
+
+    private void getAndDisplayContacts(){
+        //查询联系人信息
+        ContentResolver resolver = getContentResolver();
+        cursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+
+        // 创建适配器，将联系人信息显示在列表视图中
+        adapter = new MyAdapter(cursor, this);
+        mListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId()==R.id.btn_save){
+            //删除所有数据
+            getContentResolver().delete(ContactsInfoContent.CONTENT_URI,null,null);
+            //获取选中的信息
+            int count = mListView.getCount();
+            Map<Integer,Boolean> map = adapter.map;
+            for (int i = 0; i < count; i++) {
+                if(Boolean.TRUE.equals(map.get(i))){
+                    cursor.moveToPosition(i);
+                    @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    @SuppressLint("Range") String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    //将选中的联系人插入ContentProvider
+                    ContentValues values = new ContentValues();
+                    values.put(ContactsInfoContent.C_NAME, name);
+                    values.put(ContactsInfoContent.C_NUMBER, number);
+                    getContentResolver().insert(ContactsInfoContent.CONTENT_URI, values);
+                    Log.d(TAG, "insert成功");
+                }
+            }
+            //logd输出ContentProvider中的联系人
+            Log.d(TAG, "本地的联系人");
+            Cursor mCursor = getContentResolver().query(ContactsInfoContent.CONTENT_URI, null, null, null, null);
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    @SuppressLint("Range") String name = mCursor.getString(mCursor.getColumnIndex(ContactsInfoContent.C_NAME));
+                    @SuppressLint("Range") String number = mCursor.getString(mCursor.getColumnIndex(ContactsInfoContent.C_NUMBER));
+                    Log.d(TAG, "name:" + name + " numebr:" + number);
+                }
+            }
+            Toast.makeText(MainActivity.this,"自定义联系人成功",Toast.LENGTH_SHORT).show();
+        }
+        else if(v.getId()==R.id.btn_save_configs){
+            boolean hookEnabled = swi_hookEnabled.isChecked();//开启hook
+            int returnMode = 0;
+            if(rg_return_config.getCheckedRadioButtonId()==R.id.rb_null) returnMode=1;
+            if(rg_return_config.getCheckedRadioButtonId()==R.id.rb_selected) returnMode=2;
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("hookEnabled",hookEnabled);
+            editor.putInt("returnMode",returnMode);
+            editor.apply();
+            Toast.makeText(MainActivity.this,"保存配置成功",Toast.LENGTH_SHORT).show();
         }
     }
 }
