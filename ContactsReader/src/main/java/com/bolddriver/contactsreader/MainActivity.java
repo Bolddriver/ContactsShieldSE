@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         tv_contactsAmount = findViewById(R.id.tv_contactsAmount);
         mListView = findViewById(R.id.list_view);
+        Button btn_refresh = findViewById(R.id.btn_refresh);
 
         // 检查应用是否具有读取联系人的权限
         if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
@@ -37,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         getAndDisplayContacts();
+        btn_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getAndDisplayContacts();
+            }
+        });
     }
 
     private void getAndDisplayContacts(){
