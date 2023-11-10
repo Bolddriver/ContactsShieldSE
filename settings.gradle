@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Contacts"
+rootProject.name = "ContactsShield"
 include ':ContactsReader'
 include ':ContactsHooker'
