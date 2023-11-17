@@ -116,6 +116,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             displayContacts dContacts = new displayContacts();
             dContacts.start();
         }
+        else{
+            Toast.makeText(this,"未授予通讯录权限",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadConfigFromPref(){
