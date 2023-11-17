@@ -11,14 +11,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp">
+        <activity
+            android:name=".AboutActivity"
+            android:exported="false" />
 
         <provider
-            android:authorities="com.bolddriver.contactshooker.provider.ContactsInfoProvider"
             android:name=".provider.ContactsInfoProvider"
+            android:authorities="com.bolddriver.contactshooker.provider.ContactsInfoProvider"
             android:enabled="true"
             android:exported="true"
-            android:grantUriPermissions="true">
-        </provider>
+            android:grantUriPermissions="true"></provider>
 
         <activity
             android:name=".MainActivity"
