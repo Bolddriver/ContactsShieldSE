@@ -3,6 +3,7 @@ package com.bolddriver.contactshooker;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.CancellationSignal;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.util.List;
@@ -34,7 +35,8 @@ public class Hook implements IXposedHookLoadPackage {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                             Log.d(TAG, "=====before: arg0: " + param.args[0] + "arg4: " + param.args[4]);
-                            param.args[0] = Uri.parse("content://com.bolddriver.contactshooker.provider.ContactsInfoProvider/contacts");
+                            if(param.args[0] == ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+                                param.args[0] = Uri.parse("content://com.bolddriver.contactshooker.provider.ContactsInfoProvider/contacts");
                         }
                     });
                 } else if(returnMode == 1){
@@ -43,7 +45,8 @@ public class Hook implements IXposedHookLoadPackage {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             super.afterHookedMethod(param);
-                            param.setResult(null);
+                            if(param.args[0] == ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+                                param.setResult(null);
                         }
                     });
                 }
