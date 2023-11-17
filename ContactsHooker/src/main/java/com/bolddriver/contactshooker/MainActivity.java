@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     RadioButton rb_selected;
     MyAdapter adapter;
     Cursor cursor;
-    Button btn_save;
+//    Button btn_save;
     Button btn_save_configs;
     RadioGroup rg_return_config;
 
@@ -60,9 +60,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         swi_hookEnabled = findViewById(R.id.swi_hookEnabled);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        btn_save = findViewById(R.id.btn_save);
+//        btn_save = findViewById(R.id.btn_save);
         btn_save_configs = findViewById(R.id.btn_save_configs);
-        btn_save.setOnClickListener(this);
+//        btn_save.setOnClickListener(this);
         btn_save_configs.setOnClickListener(this);
 
         //创建SharedPreference
@@ -136,7 +136,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(v.getId()==R.id.btn_save){
+        //保存模块的开启状态和保护策略
+        boolean hookEnabled = swi_hookEnabled.isChecked();//开启hook
+        int returnMode = 0;
+        if(rg_return_config.getCheckedRadioButtonId()==R.id.rb_null) returnMode=1;
+        if(rg_return_config.getCheckedRadioButtonId()==R.id.rb_selected) returnMode=2;
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("hookEnabled",hookEnabled);
+        editor.putInt("returnMode",returnMode);
+        editor.apply();
+        Toast.makeText(MainActivity.this,"保存配置成功",Toast.LENGTH_SHORT).show();
+
+        //保存选中的联系人
+        if(rg_return_config.getCheckedRadioButtonId()==R.id.rb_selected){
             //删除所有数据
             getContentResolver().delete(ContactsInfoContent.CONTENT_URI,null,null);
             //获取选中的信息
@@ -165,19 +178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d(TAG, "name:" + name + " numebr:" + number);
                 }
             }
-            Toast.makeText(MainActivity.this,"自定义联系人成功",Toast.LENGTH_SHORT).show();
-        }
-        else if(v.getId()==R.id.btn_save_configs){
-            boolean hookEnabled = swi_hookEnabled.isChecked();//开启hook
-            int returnMode = 0;
-            if(rg_return_config.getCheckedRadioButtonId()==R.id.rb_null) returnMode=1;
-            if(rg_return_config.getCheckedRadioButtonId()==R.id.rb_selected) returnMode=2;
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("hookEnabled",hookEnabled);
-            editor.putInt("returnMode",returnMode);
-            editor.apply();
-            Toast.makeText(MainActivity.this,"保存配置成功",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"保存联系人成功",Toast.LENGTH_SHORT).show();
         }
     }
 }
