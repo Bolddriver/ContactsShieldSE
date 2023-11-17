@@ -87,8 +87,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 1);
             return;
         }
+        displayContacts gdContacts = new displayContacts();
+        gdContacts.start();
+    }
 
-        getAndDisplayContacts();
+    class displayContacts extends Thread{
+        @Override
+        public void run() {
+            MyAdapter myAdapter = getContacts();
+            runOnUiThread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            mListView.setAdapter(myAdapter);
+                        }
+                    }
+            );
+        }
     }
 
     @Override
@@ -96,7 +111,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            getAndDisplayContacts();
+            displayContacts gdContacts = new displayContacts();
+            gdContacts.start();
         }
     }
 
@@ -110,14 +126,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void getAndDisplayContacts(){
+    private MyAdapter getContacts(){
         //查询联系人信息
         ContentResolver resolver = getContentResolver();
         cursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-
-        // 创建适配器，将联系人信息显示在列表视图中
         adapter = new MyAdapter(cursor, this);
-        mListView.setAdapter(adapter);
+        return adapter;
     }
 
     @Override
