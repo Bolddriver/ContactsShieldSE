@@ -38,7 +38,7 @@ import com.bolddriver.contactshooker.provider.ContactsInfoContent;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    private static String TAG = "contactsBold";
+    private static final String TAG = "contactsBold";
     private ListView mListView;
     private SharedPreferences preferences;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -63,16 +63,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         swi_hookEnabled = findViewById(R.id.swi_hookEnabled);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        btn_save = findViewById(R.id.btn_save);
         btn_save_configs = findViewById(R.id.btn_save_configs);
-//        btn_save.setOnClickListener(this);
         btn_save_configs.setOnClickListener(this);
 
-        //创建SharedPreference
+        //SharedPreferences相关
         try {
+            //创建SharedPreferences
             Context context = MainActivity.this;
             preferences = context.getSharedPreferences("HookConfig", Context.MODE_WORLD_READABLE);
+            //从SharedPreferences中加载配置
+            loadConfigFromPref();
         } catch (Exception e) {
+            btn_save_configs.setEnabled(false);
             Log.d(TAG, "sharedprefs: "+e);
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setTitle("错误");
@@ -80,18 +82,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             alertDialogBuilder.setPositiveButton("确定", null);
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
-            return;
         }
-        //从SharedPreference中加载配置
-        loadConfigFromPref();
 
         // 检查应用是否具有读取联系人的权限
         if (checkSelfPermission(android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 1);
             return;
         }
-        displayContacts gdContacts = new displayContacts();
-        gdContacts.start();
+        displayContacts dContacts = new displayContacts();
+        dContacts.start();
     }
 
     class displayContacts extends Thread{
@@ -114,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            displayContacts gdContacts = new displayContacts();
-            gdContacts.start();
+            displayContacts dContacts = new displayContacts();
+            dContacts.start();
         }
     }
 
