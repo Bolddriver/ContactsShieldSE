@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.putInt("returnMode",returnMode);
         editor.apply();
         Toast.makeText(MainActivity.this,"保存配置成功",Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this,"没有闪退",Toast.LENGTH_SHORT).show();
 
         //保存选中的联系人
         if(rg_return_config.getCheckedRadioButtonId()==R.id.rb_selected){
@@ -170,19 +171,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     values.put(ContactsInfoContent.C_NAME, name);
                     values.put(ContactsInfoContent.C_NUMBER, number);
                     getContentResolver().insert(ContactsInfoContent.CONTENT_URI, values);
-                    Log.d(TAG, "insert成功");
+//                    Log.d(TAG, "insert成功");
                 }
             }
             //logd输出ContentProvider中的联系人
-            Log.d(TAG, "本地的联系人");
-            Cursor mCursor = getContentResolver().query(ContactsInfoContent.CONTENT_URI, null, null, null, null);
-            if (mCursor != null) {
-                while (mCursor.moveToNext()) {
-                    @SuppressLint("Range") String name = mCursor.getString(mCursor.getColumnIndex(ContactsInfoContent.C_NAME));
-                    @SuppressLint("Range") String number = mCursor.getString(mCursor.getColumnIndex(ContactsInfoContent.C_NUMBER));
-                    Log.d(TAG, "name:" + name + " numebr:" + number);
-                }
-            }
+//            Log.d(TAG, "本地的联系人");
+//            Cursor mCursor = getContentResolver().query(ContactsInfoContent.CONTENT_URI, null, null, null, null);
+//            if (mCursor != null) {
+//                while (mCursor.moveToNext()) {
+//                    @SuppressLint("Range") String name = mCursor.getString(mCursor.getColumnIndex(ContactsInfoContent.C_NAME));
+//                    @SuppressLint("Range") String number = mCursor.getString(mCursor.getColumnIndex(ContactsInfoContent.C_NUMBER));
+//                    Log.d(TAG, "name:" + name + " numebr:" + number);
+//                }
+//            }
             Toast.makeText(MainActivity.this,"保存联系人成功",Toast.LENGTH_SHORT).show();
         }
     }
